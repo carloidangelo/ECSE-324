@@ -1,0 +1,124 @@
+			.text
+			.equ HEX_PP_ONE, 0xFF200020
+			.equ HEX_PP_TWO, 0xFF200030
+			.global HEX_clear_ASM
+			.global HEX_flood_ASM
+			.global HEX_write_ASM
+
+HEX_clear_ASM:
+			PUSH {R4-R8}
+			LDR R7, =HEX_PP_ONE
+			MOV R5, #127
+			MOV R6, #1
+LOOP:		TST R0, R6
+			BEQ SKIP
+			LDR R8, [R7]
+			BIC R4, R8, R5
+			STR R4, [R7]
+SKIP:		LSL R5, #8
+			LSL R6, #1
+			CMP R6, #16
+			BNE FINISH
+			MOV R5, #127
+			LDR R7, =HEX_PP_TWO
+FINISH:		CMP R6, #64
+			BNE LOOP
+			POP {R4-R8}
+			BX LR			
+
+HEX_flood_ASM:
+			PUSH {R4-R8}
+			LDR R7, =HEX_PP_ONE
+			MOV R5, #127
+			MOV R6, #1
+LOOP2:		TST R0, R6
+			BEQ SKIP2
+			LDR R8, [R7]
+			BIC R8, R8, R5
+			ORR R4, R5, R8
+			STR R4, [R7]
+SKIP2:		LSL R5, #8
+			LSL R6, #1
+			CMP R6, #16
+			BNE FINISH2
+			MOV R5, #127
+			LDR R7, =HEX_PP_TWO
+FINISH2:	CMP R6, #64
+			BNE LOOP2
+			POP {R4-R8}
+			BX LR
+
+HEX_write_ASM:
+			PUSH {R4-R8}
+			CMP R1, #0
+			MOVEQ R1, #63
+			BEQ START  
+			CMP R1, #1
+			MOVEQ R1, #6
+			BEQ START 
+			CMP R1, #2
+			MOVEQ R1, #91  
+			BEQ START
+			CMP R1, #3
+			MOVEQ R1, #79
+			BEQ START
+			CMP R1, #4
+			MOVEQ R1, #102 
+			BEQ START 
+			CMP R1, #5
+			MOVEQ R1, #109 
+			BEQ START
+			CMP R1, #6
+			MOVEQ R1, #125
+			BEQ START  
+			CMP R1, #7
+			MOVEQ R1, #7
+			BEQ START 
+			CMP R1, #8
+			MOVEQ R1, #127
+			BEQ START  
+			CMP R1, #9
+			MOVEQ R1, #111
+			BEQ START 
+			CMP R1, #10
+			MOVEQ R1, #119
+			BEQ START  
+			CMP R1, #11
+			MOVEQ R1, #124
+			BEQ START
+			CMP R1, #12
+			MOVEQ R1, #57 
+			BEQ START 
+			CMP R1, #13
+			MOVEQ R1, #94
+			BEQ START   
+			CMP R1, #14
+			MOVEQ R1, #121
+			BEQ START   
+			CMP R1, #15
+			MOVEQ R1, #113 
+			BEQ START
+START:		LDR R7, =HEX_PP_ONE
+			MOV R4, R1
+			MOV R5, #127
+			MOV R6, #1
+LOOP3:		TST R0, R6
+			BEQ SKIP3
+			LDR R8, [R7]
+			BIC R8, R8, R5
+			ORR R8, R8, R4
+			STR R8, [R7]
+SKIP3:		LSL R4, #8
+			LSL R5, #8
+			LSL R6, #1
+			CMP R6, #16
+			BNE FINISH3
+			MOV R4, R1
+			MOV R5, #127
+			LDR R7, =HEX_PP_TWO
+FINISH3:	CMP R6, #64
+			BNE LOOP3
+			POP {R4-R8}
+			BX LR		
+
+			.end
